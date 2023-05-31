@@ -10,9 +10,10 @@ cursor.execute(existing_check)
 
 query = ("CREATE TABLE users_2 ("
          "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-         "first_name TEXT NOT NULL UNIQUE,"
-         "last_name TEXT NOT NULL UNIQUE,"
-         "age INTEGER)")
+         "first_name TEXT NOT NULL,"
+         "last_name TEXT NOT NULL,"
+         "age INTEGER,"
+         "UNIQUE (first_name, last_name))")
 
 cursor.execute(query)
 
@@ -23,7 +24,8 @@ insert_query = ("INSERT INTO users_2 (first_name, last_name, age) VALUES "
                 "('Maxym', 'Lysenko', 33),"
                 "('Volodymyr', 'Shevchenko', 29),"
                 "('Mariya', 'Sydorenko', 21),"
-                "('Oleksandr', 'Petrov', 25)")
+                "('Oleksandr', 'Petrov', 25),"
+                "('Anton', 'Petrov', 19)")
 
 cursor.execute(insert_query)
 db.commit()
