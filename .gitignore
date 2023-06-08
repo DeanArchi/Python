@@ -1,1 +1,11 @@
       .idea/
+/HW1/.idea/.gitignore
+/HW23/db/book_store.sqlite
+/HW21/db/database.sqlite
+/HW22/db/database_1.sqlite
+/.idea/dataSources.xml
+/HW1/.idea/misc.xml
+/HW1/.idea/modules.xml
+/HW1/.idea/inspectionProfiles/profiles_settings.xml
+/HW1/.idea/Python.iml
+/HW1/.idea/vcs.xml
