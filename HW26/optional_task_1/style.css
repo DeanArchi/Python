@@ -1,0 +1,190 @@
+body {
+    background-color: #89b8c2;
+    font-family: Arial, sans-serif;
+    line-height: 1.5;
+    margin: 32px;
+}
+
+a {
+    color: black;
+}
+
+.layout-header {
+    background-color: #cce9f4;
+    border-radius: 8px;
+    margin: 5px 20px;
+    padding: 10px;
+    display: flex;
+}
+
+.avatar-icon {
+    width: 60px;
+    height: auto;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    margin-left: 25px;
+}
+
+.name {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+    justify-content: center;
+}
+
+.study-info {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    line-height: 1;
+    font-weight: 600;
+}
+
+.list-info {
+    list-style-type: none;
+    font-size: 12px;
+    padding: 0;
+}
+
+.layout-content {
+    background-color: white;
+    border-radius: 8px;
+    margin: 15px 20px;
+    padding: 16px;
+}
+
+.layout-content,
+.layout-header {
+    max-width: 720px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.github-link {
+    display: flex;
+    align-items: center;
+}
+
+.git-link {
+    margin-left: 10px;
+}
+
+.main-info {
+    display: grid;
+    grid-template-columns: 100%;
+    text-align: center;
+}
+
+.item {
+    margin-top: 15px;
+}
+
+.marks-grid {
+    width: 65%;
+    border-collapse: collapse;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.marks-grid td {
+    border: 1px solid black;
+}
+
+.marks-grid td:first-child {
+    width: 45%;
+}
+
+.marks-grid td:nth-child(2) {
+    width: 15%;
+    text-align: center;
+}
+
+.marks-grid thead {
+    background-color: #cce9f4;
+}
+
+.marks-grid tr:nth-child(even) {
+    background-color: #ececec;
+}
+
+.bold {
+    font-weight: 700;
+}
+
+@media screen and (min-width: 620px) {
+    .avatar-icon {
+        width: 85px;
+        height: auto;
+    }
+}
+
+@media screen and (min-width: 820px) {
+    .avatar-icon {
+        width: 100px;
+        height: auto;
+    }
+
+    .layout-header {
+        padding: 0 16px;
+    }
+
+    .bold {
+    font-weight: 500;
+    }
+
+    .info {
+        display: flex;
+        flex-direction: column;
+        margin-left: 25px;
+    }
+
+    .name {
+        font-size: 30px;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .study-info {
+        font-family: Arial, sans-serif;
+        font-size: 15px;
+        line-height: 1.5;
+        font-weight: 600;
+    }
+    .layout-content,
+    .layout-header {
+        max-width: 720px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .main-info {
+        display: grid;
+        grid-template-columns: 20% 80%;
+        text-align: start;
+    }
+
+    .item {
+        margin-top: 15px;
+    }
+
+    .marks-grid {
+        width: 65%;
+        border-collapse: collapse;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .marks-grid td {
+        border: 1px solid black;
+    }
+
+    .marks-grid td:first-child {
+        width: 45%;
+    }
+
+    .marks-grid td:nth-child(2) {
+        width: 15%;
+        text-align: center;
+    }
+}
