@@ -1,0 +1,127 @@
+.page {
+    background-color: #89b8c2;
+    font-family: Arial, sans-serif;
+    line-height: 1.5;
+    margin: 32px;
+}
+
+a {
+    color: black !important;
+}
+
+.layout-header {
+    background-color: #cce9f4;
+    border-radius: 8px;
+    margin: 5px 20px;
+    padding: 5px 16px;
+    display: flex;
+    flex-direction: column;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+}
+
+.avatar-icon {
+    width: 100px;
+    height: auto;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    margin-left: 25px;
+}
+
+.name {
+    font-size: 30px;
+    font-weight: 700;
+    margin: 0;
+    justify-content: center;
+}
+
+.small-header {
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    font-weight: 600;
+}
+
+.list-info {
+    list-style-type: none;
+    padding: 0;
+    text-decoration: underline;
+}
+
+.github-link {
+    display: flex;
+    align-items: center;
+}
+
+.git-link {
+    margin-left: 10px;
+}
+
+.interaction-buttons {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+}
+
+.btn {
+    margin-top: 5px;
+}
+
+.new-button-color {
+    background-color: yellow !important;
+}
+
+.layout-content1 {
+    background-color: white;
+    border-radius: 8px;
+    margin: 15px 20px;
+    padding: 16px;
+}
+
+.layout-content1,
+.layout-header {
+    max-width: 720px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.main-info {
+    display: grid;
+    grid-template-columns: 20% 80%;
+}
+
+.item {
+    margin-top: 15px;
+}
+
+.marks-grid {
+    width: 65%;
+    border-collapse: collapse;
+}
+
+.marks-grid td {
+    border: 1px solid black;
+}
+
+.marks-grid td:first-child {
+    width: 45%;
+}
+
+.marks-grid td:nth-child(2) {
+    width: 15%;
+    text-align: center;
+}
+
+.marks-grid thead {
+    background-color: #cce9f4;
+}
+
+.marks-grid tr:nth-child(even) {
+    background-color: #ececec;
+}
