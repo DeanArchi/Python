@@ -1,0 +1,12 @@
+.container {
+    background-color: whitesmoke;
+    padding: 20px;
+}
+
+.header {
+    text-align: right;
+}
+
+.table {
+    width: 300px !important;
+}

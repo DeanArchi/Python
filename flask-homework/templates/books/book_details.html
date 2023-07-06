@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ title }}
+{% endblock %}
+
+{% block user %}
+    {{ super() }}
+{% endblock %}
+
+{% block body %}
+    <h1>Founded book:</h1>
+    <p>Title: {{ book['title'] }}</p>
+    <p>Author: {{ book['author'] }}</p>
+{% endblock %}
