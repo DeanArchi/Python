@@ -1,7 +1,7 @@
 import random
+from functools import wraps
 
 from flask import abort, request, redirect, render_template, session, url_for
-
 from app import app
 
 users = [
@@ -71,13 +71,25 @@ books = [
 ]
 
 
+def is_user_logged_in(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        if "username" in session:
+            return func(*args, **kwargs)
+        else:
+            return redirect(url_for("login"))
+    return wrapper
+
+
 @app.route('/')
+@is_user_logged_in
 def main_page():
     app.logger.info("This is logger for main page")
-    return render_template("main.html"), 200
+    return render_template("main.html", username=session["username"]), 200
 
 
 @app.route("/users")
+@is_user_logged_in
 def get_users():
     counter = request.args.get("count")
     if counter:
@@ -89,6 +101,7 @@ def get_users():
 
     context = {
         "title": "Users",
+        "username": session["username"],
         "users": users_render
     }
 
@@ -96,11 +109,13 @@ def get_users():
 
 
 @app.route("/books")
+@is_user_logged_in
 def get_books():
     books_render = [book for book in random.sample(books, len(books))]
 
     context = {
         "title": "Books",
+        "username": session["username"],
         "books": books_render
     }
 
@@ -108,6 +123,7 @@ def get_books():
 
 
 @app.get("/users/<user_id>")
+@is_user_logged_in
 def user_details(user_id):
     try:
         user_id_int = int(user_id)
@@ -126,6 +142,7 @@ def user_details(user_id):
 
     context = {
         "title": "User details",
+        "username": session["username"],
         "user": user
     }
 
@@ -133,6 +150,7 @@ def user_details(user_id):
 
 
 @app.get("/books/<string:title>")
+@is_user_logged_in
 def book_details(title):
     book = None
     title = str(title)
@@ -147,6 +165,7 @@ def book_details(title):
 
     context = {
         "title": "Book_details",
+        "username": session["username"],
         "book": book
     }
 
@@ -154,12 +173,14 @@ def book_details(title):
 
 
 @app.route("/params")
+@is_user_logged_in
 def get_params():
     filters = request.args
     params_render = [{"key": key, "value": value} for key, value in filters.items()]
 
     context = {
         "title": "Parameters",
+        "username": session["username"],
         "params": params_render
     }
 
@@ -168,27 +189,30 @@ def get_params():
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
-    if request.method == 'POST':
-        username = request.form.get("username")
-        password = request.form.get("password")
-
-        if not username or not password:
-            abort(400, "Missing data")
-
-        if len(username) < 5:
-            abort(400, "Invalid login data")
-
-        if len(password) < 8 \
-                or not any(map(str.isdigit, password)) \
-                or not any(map(str.isupper, password)):
-            abort(400, "Invalid login data")
-
-        session["username"] = username
-
-        return redirect(url_for("get_users"))
-
+    if "username" in session:
+        return redirect(url_for("main_page"))
     else:
-        return render_template("login/login.html")
+        if request.method == 'POST':
+            username = request.form.get("username")
+            password = request.form.get("password")
+
+            if not username or not password:
+                abort(400, "Missing data")
+
+            if len(username) < 5:
+                abort(400, "Invalid login data")
+
+            if len(password) < 8 \
+                    or not any(map(str.isdigit, password)) \
+                    or not any(map(str.isupper, password)):
+                abort(400, "Invalid login data")
+
+            session["username"] = username
+
+            return redirect(url_for("get_users"))
+
+        else:
+            return render_template("login/login.html")
 
 
 @app.route("/logout")
