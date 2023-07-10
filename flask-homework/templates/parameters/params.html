@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ title }}
+{% endblock %}
+
+{% block user %}
+    {{ super() }}
+{% endblock %}
+
+{% block body %}
+    <table class="table table-bordered">
+        <thead>
+            <tr><th scope="col">Parameter</th> <th scope="col">Value</th></tr>
+        </thead>
+    <tbody>
+        {% for param in params %}
+            <tr>
+                    <td>{{ param["key"] }}</td>
+                    <td>{{ param["value"] }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+    </table>
+{% endblock %}

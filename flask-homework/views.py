@@ -1,6 +1,7 @@
 import random
-from flask import abort, request, redirect
+from functools import wraps
 
+from flask import abort, request, redirect, render_template, session, url_for
 from app import app
 
 users = [
@@ -70,89 +71,59 @@ books = [
 ]
 
 
+def is_user_logged_in(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        if "username" in session:
+            return func(*args, **kwargs)
+        else:
+            return redirect(url_for("login"))
+    return wrapper
+
+
 @app.route('/')
+@is_user_logged_in
 def main_page():
     app.logger.info("This is logger for main page")
-    return f"""
-    <h1>Main page</h1>
-    <p>Here's links to other pages</p>
-    <ul>
-        <li><a href="/login">Login</a></li>
-        <li><a href="/users">Users</a></li>
-        <li><a href="/books">Books</a></li>
-        <li><a href="/params">Params</a></li>
-    </ul>
-    """
-
-
-@app.route('/hello')
-def hello_world():
-    app.logger.info("This is logger for page with endpoint /hello")
-    return '<h1>Hello world!</h1>'
-
-
-@app.route('/gethtml')
-def get_html():
-    app.logger.info("This is logger for page with endpoint /gethtml")
-    return (
-        '<h1>This page return html-code</h1>'
-        '<p>Random text below header</p>'
-    )
-
-
-@app.route('/getjson')
-def get_json():
-    app.logger.info("This is logger for page with endpoint /getjson")
-    return ({
-        "user_1": {
-            "name": "Ivan",
-            "age": 18
-        },
-        "user_2": {
-            "name": "Anatoliy",
-            "age": 23
-        }
-    })
+    return render_template("main.html", username=session["username"]), 200
 
 
 @app.route("/users")
+@is_user_logged_in
 def get_users():
     counter = request.args.get("count")
     if counter:
         counter = int(counter)
     else:
         counter = random.randint(1, 6)
-    users_render = ''.join([
-        f"<li>{user['first_name']} {user['second_name']}</li>"
-        for user in random.sample(users, counter)
-    ])
 
-    response = f"""
-    <h1>List of users</h1>
-    <ul>
-        {users_render}
-    </ul>
-    """
-    return response, 200
+    users_render = [user for user in random.sample(users, counter)]
+
+    context = {
+        "title": "Users",
+        "username": session["username"],
+        "users": users_render
+    }
+
+    return render_template("users/users.html", **context), 200
 
 
 @app.route("/books")
+@is_user_logged_in
 def get_books():
-    books_render = ''.join([
-        f"<li>Title: '{book['title']}', author: {book['author']}"
-        for book in random.sample(books, len(books))
-    ])
+    books_render = [book for book in random.sample(books, len(books))]
 
-    response = f"""
-    <h1>List of books</h1>
-    <ul>
-        {books_render}
-    </ul>
-    """
-    return response, 200
+    context = {
+        "title": "Books",
+        "username": session["username"],
+        "books": books_render
+    }
+
+    return render_template("books/books.html", **context), 200
 
 
 @app.get("/users/<user_id>")
+@is_user_logged_in
 def user_details(user_id):
     try:
         user_id_int = int(user_id)
@@ -169,17 +140,18 @@ def user_details(user_id):
     if not user:
         abort(404, "User not found")
 
-    response = f"""
-    <h1>Founded user:</h1>
-    <p>First name: {user['first_name']}</p>
-    <p>Second name: {user['second_name']}</p>
-    """
+    context = {
+        "title": "User details",
+        "username": session["username"],
+        "user": user
+    }
 
-    return response, 200
+    return render_template("users/user_details.html", **context), 200
 
 
 @app.get("/books/<string:title>")
-def books_details(title):
+@is_user_logged_in
+def book_details(title):
     book = None
     title = str(title)
     edited_title = title.capitalize()
@@ -191,68 +163,62 @@ def books_details(title):
     if not book:
         abort(404, "Book not found")
 
-    response = f"""
-    <h1>Founded book:</h1>
-    <p>Title: {book['title']}</p>
-    <p>Author: {book['author']}</p>
-    """
+    context = {
+        "title": "Book_details",
+        "username": session["username"],
+        "book": book
+    }
 
-    return response, 200
+    return render_template("books/book_details.html", **context), 200
 
 
 @app.route("/params")
+@is_user_logged_in
 def get_params():
     filters = request.args
-    test_render = ''.join([
-        f"<tr><td>{key}</td> <td>{value}</td></tr>"
-        for key, value in filters.items()
-    ])
+    params_render = [{"key": key, "value": value} for key, value in filters.items()]
 
-    response = f"""
-    <table>
-        <thead>
-            <tr><th>Parameter</th> <th>Value</th></tr>
-        </thead>
-        <tbody>
-            {test_render}
-        </tbody>
-    </table>
-    """
+    context = {
+        "title": "Parameters",
+        "username": session["username"],
+        "params": params_render
+    }
 
-    return response, 200
+    return render_template("parameters/params.html", **context), 200
 
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
-    if request.method == 'POST':
-        username = request.form["username"]
-        password = request.form["password"]
-
-        if not username or not password:
-            abort(400, "Missing data")
-
-        if len(username) < 5:
-            abort(400, "Invalid login data")
-
-        if len(password) < 8 \
-                or not any(map(str.isdigit, password)) \
-                or not any(map(str.isupper, password)):
-            abort(400, "Invalid login data")
-
-        return redirect("/users")
-
+    if "username" in session:
+        return redirect(url_for("main_page"))
     else:
-        return f"""
-        <form method="POST" action="/login">
-            <label for="username">Username</label>
-            <input type="text" name="username" id="username"><br><br>
+        if request.method == 'POST':
+            username = request.form.get("username")
+            password = request.form.get("password")
 
-            <label for="password">Password</label>
-            <input type="password" name="password" id="password"><br><br>
+            if not username or not password:
+                abort(400, "Missing data")
 
-            <input type="submit" value="Submit">
-        </form>
-        """
+            if len(username) < 5:
+                abort(400, "Invalid login data")
+
+            if len(password) < 8 \
+                    or not any(map(str.isdigit, password)) \
+                    or not any(map(str.isupper, password)):
+                abort(400, "Invalid login data")
+
+            session["username"] = username
+
+            return redirect(url_for("get_users"))
+
+        else:
+            return render_template("login/login.html")
+
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("login"))
 
 
 @app.errorhandler(404)
