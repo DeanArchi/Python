@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ title }}
+{% endblock %}
+
+{% block user %}
+    {{ super() }}
+{% endblock %}
+
+{% block body %}
+    <h1>Purchase id: {{ purchase }}</h1>
+    <h3>Customer: {{ user["first_name"] }} {{ user["last_name"] }}</h3>
+    <h3>Made a purchase of the book:</h3>
+    <ul>
+        <li>Title: '{{ book["title"] }}'</li>
+        <li>Author: {{ book["author"] }}</li>
+        <li>Price: {{ book["price"] }} UAH</li>
+    </ul>
+{% endblock %}

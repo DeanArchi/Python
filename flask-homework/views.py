@@ -1,74 +1,9 @@
 import random
 from functools import wraps
 
-from flask import abort, request, redirect, render_template, session, url_for
-from app import app
-
-users = [
-    {
-        "id": 1,
-        "first_name": "Andriy",
-        "second_name": "Ivanov"
-    },
-    {
-        "id": 2,
-        "first_name": "Ivan",
-        "second_name": "Petrov"
-    },
-    {
-        "id": 3,
-        "first_name": "John",
-        "second_name": "Sydorov"
-    },
-    {
-        "id": 4,
-        "first_name": "Vitalii",
-        "second_name": "Kovalenko"
-    },
-    {
-        "id": 5,
-        "first_name": "Oleg",
-        "second_name": "Vasylenko"
-    },
-    {
-        "id": 6,
-        "first_name": "Olexandr",
-        "second_name": "Lysenko"
-    }
-]
-
-books = [
-    {
-        "id": 1,
-        "title": "1984",
-        "author": "George Orwell"
-    },
-    {
-        "id": 2,
-        "title": "Kobzar",
-        "author": "Taras Shevchenko"
-    },
-    {
-        "id": 3,
-        "title": "Tyhrolovy",
-        "author": "Vasyl Shkliar"
-    },
-    {
-        "id": 4,
-        "title": "Mamai",
-        "author": "Vasyl Sukhomlynskyi"
-    },
-    {
-        "id": 5,
-        "title": "Zyma",
-        "author": "Borys Hrinchenko"
-    },
-    {
-        "id": 6,
-        "title": "Lis",
-        "author": "Vasyl Stus"
-    }
-]
+from flask import abort, request, redirect, render_template, session, url_for, jsonify
+from app import app, db
+from models import *
 
 
 def is_user_logged_in(func):
@@ -81,23 +16,24 @@ def is_user_logged_in(func):
     return wrapper
 
 
-@app.route('/')
+@app.get('/')
 @is_user_logged_in
 def main_page():
     app.logger.info("This is logger for main page")
     return render_template("main.html", username=session["username"]), 200
 
 
-@app.route("/users")
+@app.get("/users")
 @is_user_logged_in
 def get_users():
     counter = request.args.get("count")
-    if counter:
-        counter = int(counter)
-    else:
-        counter = random.randint(1, 6)
 
-    users_render = [user for user in random.sample(users, counter)]
+    if counter:
+        query = db.select(User).limit(counter)
+    else:
+        query = db.select(User)
+
+    users_render = db.session.execute(query).scalars()
 
     context = {
         "title": "Users",
@@ -108,10 +44,31 @@ def get_users():
     return render_template("users/users.html", **context), 200
 
 
-@app.route("/books")
+@app.post("/users")
+@is_user_logged_in
+def create_user():
+    data = request.json
+    first_name = data.get("first_name")
+    last_name = data.get("last_name")
+
+    if not first_name or not last_name:
+        abort(400, "Missing required fields")
+
+    user = User(
+        first_name=first_name,
+        last_name=last_name
+    )
+
+    db.session.add(user)
+    db.session.commit()
+    return jsonify({"message": "User created"}), 201
+
+
+@app.get("/books")
 @is_user_logged_in
 def get_books():
-    books_render = [book for book in random.sample(books, len(books))]
+    query = db.select(Book)
+    books_render = db.session.execute(query).scalars()
 
     context = {
         "title": "Books",
@@ -120,6 +77,28 @@ def get_books():
     }
 
     return render_template("books/books.html", **context), 200
+
+
+@app.post("/books")
+@is_user_logged_in
+def create_book():
+    data = request.json
+    title = data.get("title")
+    author = data.get("author")
+    price = data.get("price")
+
+    if not title or not author or not price:
+        abort(400, "Missing required fields")
+
+    book = Book(
+        title=title,
+        author=author,
+        price=price
+    )
+
+    db.session.add(book)
+    db.session.commit()
+    return jsonify({"message": "Book created"}), 201
 
 
 @app.get("/users/<user_id>")
@@ -132,8 +111,11 @@ def user_details(user_id):
 
     user = None
 
+    query = db.select(User)
+    users = db.session.execute(query).scalars()
+
     for item in users:
-        if user_id_int == item["id"]:
+        if user_id_int == item.id:
             user = item
             break
 
@@ -155,8 +137,11 @@ def book_details(title):
     book = None
     title = str(title)
     edited_title = title.capitalize()
+
+    query = db.select(Book)
+    books = db.session.execute(query).scalars()
     for item in books:
-        if edited_title == item["title"]:
+        if edited_title == item.title:
             book = item
             break
 
@@ -170,6 +155,90 @@ def book_details(title):
     }
 
     return render_template("books/book_details.html", **context), 200
+
+
+@app.get("/purchases")
+@is_user_logged_in
+def get_purchases():
+    query = db.select(User.first_name, User.last_name, Book.title, Book.author)\
+        .join(Purchase, User.id == Purchase.user_id)\
+        .join(Book, Book.id == Purchase.book_id)
+
+    purchases_render = db.session.execute(query)
+
+    context = {
+        "title": "Purchases_list",
+        "username": session["username"],
+        "purchases": purchases_render
+    }
+    return render_template("purchases/purchases.html", **context), 200
+
+
+@app.get("/purchases/<int:purchase_id>")
+@is_user_logged_in
+def purchase_details(purchase_id):
+    try:
+        purchase_id = int(purchase_id)
+    except ValueError:
+        abort(400, "Invalid purchase id")
+
+    purchase = None
+
+    query = db.select(Purchase)
+    purchases = db.session.execute(query).scalars()
+
+    for item in purchases:
+        if purchase_id == item.id:
+            purchase = item
+            break
+
+    if not purchase:
+        abort(404, "Purchase not found")
+
+    user_query = db.select(User).where(User.id == Purchase.user_id)
+    book_query = db.select(Book).where(Book.id == Purchase.book_id)
+
+    user = db.session.execute(user_query).scalar()
+    book = db.session.execute(book_query).scalar()
+
+    context = {
+        "title": "User details",
+        "username": session["username"],
+        "purchase": purchase.id,
+        "user": user,
+        "book": book
+    }
+
+    return render_template("purchases/purchase_details.html", **context), 200
+
+
+@app.post("/purchases")
+def create_purchase():
+    data = request.json
+    user_id = data.get("user_id")
+    book_id = data.get("book_id")
+
+    if not user_id or not book_id:
+        abort(400, "Missing required fields")
+
+    user_query = db.select(User.id)
+    users_id = [user[0] for user in db.session.execute(user_query)]
+    if user_id not in users_id:
+        abort(400, "User not found")
+
+    book_query = db.select(Book.id)
+    books_id = [book[0] for book in db.session.execute(book_query)]
+    if book_id not in books_id:
+        abort(400, "Book not found")
+
+    purchase = Purchase(
+        user_id=user_id,
+        book_id=book_id
+    )
+
+    db.session.add(purchase)
+    db.session.commit()
+    return jsonify({"message": "Purchase created"}), 201
 
 
 @app.route("/params")
