@@ -3,5 +3,5 @@ from django.urls import path
 from users import views
 
 urlpatterns = [
-    path('', views.users_greeting)
+    path('', views.users_json)
 ]
