@@ -1,6 +1,6 @@
 import json
 
-from django.http import HttpResponse
+from django.http import JsonResponse
 from django.shortcuts import render
 
 from purchases.models import Purchase
@@ -22,5 +22,4 @@ def purchases_json(request):
              'price': purchase['book__price'],
              'purchase_date': purchase['purchase_date'].strftime('%Y-%m-%d %H:%M:%S')}
             for purchase in purchases]
-    json_data = '\n'.join(json.dumps(purchase) for purchase in data)
-    return HttpResponse(json_data, content_type='application/json')
+    return JsonResponse(data, safe=False, json_dumps_params={'indent': 4})

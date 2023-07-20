@@ -1,6 +1,6 @@
 import json
 
-from django.http import HttpResponse
+from django.http import JsonResponse
 
 from users.models import User
 
@@ -12,5 +12,4 @@ def users_json(request):
              'first_name': user.first_name,
              'last_name': user.last_name}
             for user in users]
-    json_data = '\n'.join(json.dumps(user) for user in data)
-    return HttpResponse(json_data, content_type='application/json')
+    return JsonResponse(data, safe=False, json_dumps_params={'indent': 4})

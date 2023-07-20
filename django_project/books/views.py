@@ -1,6 +1,6 @@
 import json
 
-from django.http import HttpResponse
+from django.http import JsonResponse
 
 from books.models import Book
 
@@ -12,5 +12,4 @@ def books_json(request):
              'author': book.author,
              'price': book.price}
             for book in books]
-    json_data = '\n'.join(json.dumps(book) for book in data)
-    return HttpResponse(json_data, content_type='application/json')
+    return JsonResponse(data, safe=False, json_dumps_params={'indent': 4})
