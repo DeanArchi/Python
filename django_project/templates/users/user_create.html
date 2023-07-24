@@ -1,0 +1,12 @@
+<head>
+    <title>Create user</title>
+</head>
+<body>
+    <h1>Create user</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Create</button>
+        <a href="{% url 'users:user-list' %}">Back</a>
+    </form>
+</body>

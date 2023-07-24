@@ -1,0 +1,13 @@
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+<head>
+    <title>Book detail</title>
+</head>
+<body>
+    <h1>{{ book.title }}</h1>
+    <p>Author: {{ book.author }}</p>
+    <p>Price of the book: {{ book.price }} UAH</p>
+    <a href="{% url 'books:book-update' book.pk %}">Update book</a></br>
+    <a href="{% url 'books:book-delete' book.pk %}">Delete book</a></br>
+    <a href="{% url 'books:book-list' %}">Back</a>
+</body>

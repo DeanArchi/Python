@@ -1,0 +1,20 @@
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+<head>
+    <title>Home page</title>
+</head>
+<body>
+    <h1>Welcome to the home page</h1>
+    <p>Navigation</p>
+    <ul>
+        <li>
+            <a href="{% url 'users:user-list' %}">User list</a>
+        </li>
+        <li>
+            <a href="{% url 'books:book-list' %}">Book list</a>
+        </li>
+        <li>
+            <a href="{% url 'purchases:purchase-list' %}">Purchase list</a>
+        </li>
+    </ul>
+</body>

@@ -1,0 +1,12 @@
+<head>
+    <title>Delete user</title>
+</head>
+<body>
+    <h1>Delete user</h1>
+    <p>Are you sure you want to delete the user "{{ user.username }}"?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Delete</button>
+        <a href="{% url 'users:user-detail' pk=user.pk %}">Cancel</a>
+    </form>
+</body>

@@ -1,0 +1,15 @@
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+<head>
+    <title>User detail</title>
+</head>
+<body>
+    <h1>{{ user.username }}</h1>
+    <p>Joined: {{ user.date_joined|date:'Y-m-d' }}</p>
+    <p>First name: {{ user.first_name|default:'No Data' }} </p>
+    <p>Last name: {{ user.last_name|default:'No Data' }}</p>
+    <p>Last name: {{ user.age|default:'No Data' }}</p>
+    <a href="{% url 'users:user-update' user.pk %}">Update user</a></br>
+    <a href="{% url 'users:user-delete' user.pk %}">Delete user</a></br>
+    <a href="{% url 'users:user-list' %}">Back</a>
+</body>

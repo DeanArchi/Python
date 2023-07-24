@@ -1,0 +1,32 @@
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+<head>
+    <title>Purchase list</title>
+</head>
+<body>
+    <h1>Purchase list</h1>
+    <table class="table table-bordered" style="width: 750px">
+        <thead>
+            <tr>
+                <th scope="col">Username</th>
+                <th scope="col">Full name</th>
+                <th scope="col">Book title</th>
+                <th scope="col">Book price</th>
+                <th scope="col">Purchase date</th>
+            </tr>
+        </thead>
+        {% for purchase in purchases %}
+            <tbody>
+                <tr>
+                    <td><a href="{% url 'purchases:purchase-detail' pk=purchase.pk %}">{{ purchase.user.username }}</a></td>
+                    <td>{{ purchase.user.last_name|default:'No Data' }} {{ purchase.user.first_name }}</td>
+                    <td>{{ purchase.book.title }}</td>
+                    <td>{{ purchase.book.price }}</td>
+                    <td>{{ purchase.purchase_date|date:'Y-m-d, H:i' }}</td>
+                </tr>
+            </tbody>
+        {% endfor %}
+    </table>
+    <a href="{% url 'purchases:purchase-create' %}">Add new purchase</a></br>
+    <a href="{% url 'home-page' %}">Main page</a>
+</body>
