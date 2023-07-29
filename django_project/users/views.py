@@ -1,3 +1,5 @@
+from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import UserCreationForm
 from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
@@ -28,10 +30,11 @@ class UserDetailView(DetailView):
     context_object_name = 'user'
 
 
-class UserCreateForm(forms.ModelForm):
+class UserCreateForm(UserCreationForm):
     class Meta:
-        model = User
-        fields = ('username', 'password', 'first_name', 'last_name', 'age')
+        model = get_user_model()
+        # fields = ('username', 'password', 'first_name', 'last_name', 'age')
+        fields = UserCreationForm.Meta.fields + ('first_name', 'last_name', 'age', )
         widgets = {
             'password': forms.PasswordInput()
         }
