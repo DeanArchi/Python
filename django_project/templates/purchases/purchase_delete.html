@@ -1,0 +1,12 @@
+<head>
+    <title>Delete purchase</title>
+</head>
+<body>
+    <h1>Delete purchase</h1>
+    <p>Are you sure you want to delete purchase of the user "{{ purchase.user.username }}"?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Delete</button>
+        <a href="{% url 'purchases:purchase-detail' pk=purchase.pk %}">Cancel</a>
+    </form>
+</body>

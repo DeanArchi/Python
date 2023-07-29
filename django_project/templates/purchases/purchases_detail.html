@@ -1,0 +1,37 @@
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+<head>
+    <title>Purchase detail</title>
+</head>
+<body>
+    <h1>
+        Customer:
+        {% if purchase.user.first_name and purchase.user.last_name %}
+            {{ purchase.user.first_name }} {{ purchase.user.last_name }}
+        {% else %}
+            No Data
+        {% endif %}
+    </h1>
+    <h5>Customer's username: {{ purchase.user.username }}</h5>
+    <p>Order details:</p>
+    <table class="table table-bordered" style="width: 650px">
+        <thead>
+            <tr>
+                <th>Book title</th>
+                <th>Author</th>
+                <th>Price, UAH</th>
+                <th>Purchase date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ purchase.book.title }}</td>
+                <td>{{ purchase.book.author }}</td>
+                <td>{{ purchase.book.price }}</td>
+                <td>{{ purchase.purchase_date|date:'Y-m-d, H:i' }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <a href="{% url 'purchases:purchase-delete' pk=purchase.pk %}">Delete purchase</a></br>
+    <a href="{% url 'purchases:purchase-list' %}">Back</a>
+</body>

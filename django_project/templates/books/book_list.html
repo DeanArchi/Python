@@ -1,0 +1,28 @@
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+<head>
+    <title>Book list</title>
+</head>
+<body>
+    <h1>Book list</h1>
+    <table class="table table-bordered" style="width: 450px">
+        <thead>
+            <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Author name</th>
+                <th scope="col">Price</th>
+            </tr>
+        </thead>
+        {% for book in books %}
+            <tbody>
+                <tr>
+                    <td><a href="{% url 'books:book-detail' book.pk %}">{{ book.title }}</a></td>
+                    <td>{{ book.author }}</td>
+                    <td>{{ book.price }}</td>
+                </tr>
+            </tbody>
+        {% endfor %}
+    </table>
+    <a href="{% url 'books:book-create' %}">Add new book</a></br>
+    <a href="{% url 'home-page' %}">Main page</a>
+</body>

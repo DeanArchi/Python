@@ -1,0 +1,14 @@
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+<head>
+    <title>Book update</title>
+</head>
+<body>
+    <h1>Book update</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Update</button>
+    </form>
+    <a href="{% url 'books:book-list' %}">Back</a>
+</body>
