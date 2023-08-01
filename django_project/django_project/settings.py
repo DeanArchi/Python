@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_bootstrap5',
+    'rest_framework',
     'users.apps.UsersConfig',
     'books.apps.BooksConfig',
     'purchases.apps.PurchasesConfig',
@@ -132,3 +133,10 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.User'
+
+# Config for DRF
+# https://www.django-rest-framework.org/api-guide/settings/#settings
+# Look into settings in python shell
+# > from rest_framework.settings import api_settings
+# > api_settings.defaults
+REST_FRAMEWORK = {}
