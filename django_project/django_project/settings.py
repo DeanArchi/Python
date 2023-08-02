@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_bootstrap5',
     'rest_framework',
+    'django_filters',
     'users.apps.UsersConfig',
     'books.apps.BooksConfig',
     'purchases.apps.PurchasesConfig',
@@ -139,4 +140,12 @@ AUTH_USER_MODEL = 'users.User'
 # Look into settings in python shell
 # > from rest_framework.settings import api_settings
 # > api_settings.defaults
-REST_FRAMEWORK = {}
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 5,
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter',
+    ],
+}
