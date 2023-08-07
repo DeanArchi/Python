@@ -5,6 +5,7 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django import forms
 
+from users.tasks import purchases_of_user
 from users.models import User
 
 
@@ -28,6 +29,13 @@ class UserDetailView(DetailView):
     model = User
     template_name = 'users/user_detail.html'
     context_object_name = 'user'
+
+    def get_object(self, queryset=None):
+        user_id = self.kwargs.get('pk')  # Assuming the primary key field is 'pk', which is the default
+
+        # Now you can pass the user_id to the celery task
+        purchases_of_user.delay(user_id)
+        return super().get_object()
 
 
 class UserCreateForm(UserCreationForm):

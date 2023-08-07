@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django_bootstrap5',
     'rest_framework',
     'django_filters',
+    'django_celery_beat',
     'users.apps.UsersConfig',
     'books.apps.BooksConfig',
     'purchases.apps.PurchasesConfig',
@@ -148,4 +149,15 @@ REST_FRAMEWORK = {
         'rest_framework.filters.SearchFilter',
         'rest_framework.filters.OrderingFilter',
     ],
+}
+
+# Celery settings
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+
+CELERY_BEAT_SCHEDULE = {
+    'print_quantity_of_users_every_60_seconds': {  # A unique name for this task
+        'task': 'users.tasks.print_quantity_of_users',  # Import path for the task
+        'schedule': 60.0,  # Run every 60 seconds
+    },
 }
