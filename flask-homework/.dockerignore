@@ -1,0 +1,7 @@
+venv
+.idea
+.gitignore
+.dockerignore
+py[cod]
+__pychache__
+.dockerignore
